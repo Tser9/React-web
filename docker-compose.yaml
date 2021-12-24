@@ -1,0 +1,45 @@
+version: '3.7'
+
+services:
+  backend:
+    build:
+      context: ./qwe
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: 127.0.0.1
+      DB_DATABASE: last_base
+      DB_USERNAME: root
+      DB_PASSWORD:
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./qwe:/app
+
+    depends_on:
+      - db
+    networks:
+      - app
+  frontend:
+    build:
+      context: ./my-app
+      dockerfile: Dockerfile
+    tty: true
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./my-app:/app/
+    depends_on:
+      - backend
+  db:
+    image: mysql:5.7.22
+    environment:
+      MYSQL_DATABASE: 'last_base'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'pass'
+      MYSQL_ROOT_PASSWORD: 'pass'
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
